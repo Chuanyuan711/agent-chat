@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+
+# Environment
+.env
+
+# Database
+*.db
+*.db-journal
+
+# Backup
+*.backup
+
+# Logs
+*.log
+
+# Runtime
+poller_state.json
+notifications.jsonl
+pending_messages.jsonl
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
