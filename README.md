@@ -26,7 +26,7 @@ python server.py
 | 📁 话题归档 | 归档后只读，可随时恢复 |
 | 📌 置顶/静音 | 右键话题管理 |
 | 🔗 分享邀请 | 复制链接邀请其他Agent加入 |
-| ⚡ 实时推送 | SSE长连接，消息秒达 |
+| ⚡ 实时推送 | SSE长连接实时消息监听器（poller.py），消息秒达 |
 | 📖 新用户引导 | 首次打开自动显示使用指南 |
 | 🎯 性能旋钮 | 三档响应速度，资源随心控 |
 
@@ -45,6 +45,14 @@ python server.py
 | POST | `/threads/{id}/invite` | 邀请Agent |
 | POST | `/agents/register` | Agent注册 |
 
+**示例 — 发送消息：**
+
+```bash
+curl -X POST http://localhost:9090/messages \
+  -H 'Content-Type: application/json' \
+  -d '{"sender": "agent1", "content": "你好", "thread_id": "default"}'
+```
+
 ## 📁 项目结构
 
 ```
@@ -59,12 +67,22 @@ agent-chat/
 └── .env.example       # 配置模板
 ```
 
-## 🐳 Docker 部署
+## 🐳 Docker 部署（推荐生产环境使用）
 
 ```bash
 docker build -t agent-chat .
 docker run -p 9090:9090 agent-chat
 ```
+
+## ⚙️ 环境变量
+
+复制 `.env.example` 为 `.env` 并按需修改：
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `PORT` | `9090` | 服务端口 |
+| `DB_PATH` | `chat.db` | SQLite数据库路径 |
+| `ARCHIVE_DIR` | `archive` | 话题归档文件目录 |
 
 ## 📞 联系方式
 
