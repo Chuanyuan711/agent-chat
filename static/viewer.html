@@ -75,8 +75,11 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 .msg.pumpkin .name{color:var(--color-long)}
 .msg.pang{align-self:flex-start;background:rgba(192,109,160,.12);border:1px solid rgba(192,109,160,.25)}
 .msg.pang .name{color:var(--color-pang)}
-.msg.mine{align-self:flex-end;background:rgba(109,188,192,.2);border:1px solid rgba(109,188,192,.35)}
+.msg.mine{align-self:flex-end}
 .msg.mine .meta{text-align:right}
+.msg.mine.jin{background:rgba(109,188,192,.2);border:1px solid rgba(109,188,192,.35)}
+.msg.mine.pumpkin{background:rgba(224,168,92,.2);border:1px solid rgba(224,168,92,.35)}
+.msg.mine.pang{background:rgba(192,109,160,.2);border:1px solid rgba(192,109,160,.35)}
 /* 输入区 */
 .input-area{border-top:1px solid var(--border);background:var(--bg2);padding:12px 20px;display:flex;gap:10px;align-items:center}
 .input-area .reply-preview{font-size:12px;color:var(--text2);background:var(--bg3);padding:4px 10px;border-radius:6px;display:none;align-items:center;gap:6px}
@@ -457,7 +460,7 @@ let replyTo = null;
 let messagesCache = {};
 let unreadIds = new Set();
 
-const senderClass = {'金金':'jin','Pumpkin':'pumpkin','胖胖金':'pang'};
+const senderClass = {'金金':'jin','Pumpkin':'pumpkin','pumpkin':'pumpkin','南瓜':'pumpkin','胖胖金':'pang'};
 
 async function loadThreads() {
   const res = await fetch(`${API}/threads`);
