@@ -150,6 +150,11 @@ def create_message(msg: MessageCreate):
         "INSERT INTO messages (sender, content, thread_id, reply_to, timestamp, priority) VALUES (?, ?, ?, ?, ?, ?)",
         (msg.sender, msg.content, msg.thread_id, msg.reply_to, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), priority)
     )
+    # 自动更新thread_members状态为joined（如果存在）
+    cur.execute(
+        "UPDATE thread_members SET status = 'joined' WHERE thread_id = ? AND agent_id = ? AND status = 'invited'",
+        (msg.thread_id, msg.sender)
+    )
     conn.commit()
     row = cur.execute(
         "SELECT id, sender, content, thread_id, reply_to, timestamp, status, priority FROM messages WHERE id = ?",

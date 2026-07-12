@@ -105,15 +105,16 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 /* 分享弹窗 */
 .share-modal{width:480px}
 .share-modal .agent-list{max-height:240px;overflow-y:auto;margin-bottom:14px;border:1px solid var(--border);border-radius:8px;background:var(--bg3)}
-.share-modal .agent-item{display:flex;align-items:center;padding:12px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border)}
+.share-modal .agent-item{display:flex;align-items:center;padding:12px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);gap:10px}
 .share-modal .agent-item:last-child{border-bottom:none}
 .share-modal .agent-item:hover{background:rgba(109,188,192,.1)}
-.share-modal .agent-item input[type=checkbox]{margin-right:10px;accent-color:var(--primary);cursor:pointer}
-.share-modal .agent-item .agent-name{flex:1;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.share-modal .agent-item .agent-role{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(109,188,192,.15);color:var(--primary)}
-.share-modal .agent-item.is-member{opacity:.6;cursor:default;background:rgba(255,255,255,.02)}
+.share-modal .agent-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+.share-modal .agent-item .agent-name{flex:1;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.share-modal .agent-item .agent-role{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(109,188,192,.15);color:var(--primary);flex-shrink:0}
+.share-modal .agent-item.is-member{cursor:default;background:rgba(255,255,255,.02)}
 .share-modal .agent-item.is-member .agent-name{color:var(--text2)}
-.share-modal .member-status{font-size:11px;padding:2px 8px;border-radius:10px;margin-left:6px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.share-modal .agent-item.is-member input[type=checkbox]{display:none}
+.share-modal .member-status{font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0}
 .share-modal .member-status.joined{background:rgba(80,200,120,.15);color:#50c878}
 .share-modal .member-status.invited{background:rgba(255,200,60,.15);color:#f0c040}
 .share-modal .link-section{margin-bottom:14px}
@@ -987,7 +988,8 @@ async function loadShareAgents() {
       const statusHtml = isMember ? `<span class="member-status ${memberStatus}">${statusLabels[memberStatus] || memberStatus}</span>` : '';
       div.innerHTML = `
         <input type="checkbox" value="${p.id}" ${isMember ? 'disabled' : ''}>
-        <span class="agent-name">${p.name}${statusHtml}</span>
+        <span class="agent-name">${p.name}</span>
+        ${statusHtml}
         <span class="agent-role">${roleLabel}</span>
       `;
       if (!isMember) {
