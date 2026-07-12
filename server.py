@@ -156,6 +156,39 @@ def create_message(msg: MessageCreate):
         (cur.lastrowid,),
     ).fetchone()
     conn.close()
+    
+    # 写入通知文件 + 调用 OpenClaw hooks
+    if msg.sender != "Pumpkin":
+        try:
+            notify_file = os.path.join(_BASE_DIR, "pumpkin_notifications.jsonl")
+            with open(notify_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps({
+                    "id": row["id"],
+                    "sender": row["sender"],
+                    "content": row["content"],
+                    "thread_id": row["thread_id"],
+                    "timestamp": row["timestamp"],
+                }, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+        # 调用 OpenClaw hooks 唤醒
+        try:
+            hook_data = json.dumps({
+                "text": f"[Agent Chat] {msg.sender}: {msg.content[:100]}",
+            }, ensure_ascii=False).encode("utf-8")
+            hook_req = urllib.request.Request(
+                "http://localhost:18789/hooks/wake",
+                data=hook_data,
+                headers={
+                    "Authorization": "Bearer agent-chat-hook-2026",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            urllib.request.urlopen(hook_req, timeout=3)
+        except Exception:
+            pass
+    
     return dict(row)
 
 @app.get("/messages")
