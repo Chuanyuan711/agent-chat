@@ -418,7 +418,16 @@ def invite_to_thread(thread_id: str, invite: ThreadInvite):
         )
         conn.commit()
     except sqlite3.IntegrityError:
-        # Already a member/invited - update status
+        # Already exists - check current status before updating
+        existing = conn.execute(
+            "SELECT status FROM thread_members WHERE thread_id = ? AND agent_id = ?",
+            (thread_id, invite.participant_id),
+        ).fetchone()
+        if existing and existing["status"] == "joined":
+            # Already joined - don't reset to invited
+            conn.close()
+            return {"thread_id": thread_id, "agent_id": invite.participant_id, "status": "already_joined"}
+        # Re-invite if previously left/invited
         conn.execute(
             "UPDATE thread_members SET status = 'invited' WHERE thread_id = ? AND agent_id = ?",
             (thread_id, invite.participant_id),

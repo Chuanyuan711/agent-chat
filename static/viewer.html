@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
 <title>AgentChat</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 :root{
   --bg1:#0a1a1c;--bg2:#0d2224;--bg3:#112a2c;
   --border:#1a3538;--text1:#D6E8E8;--text2:#8bb8ba;
@@ -107,10 +109,13 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 .share-modal .agent-item:last-child{border-bottom:none}
 .share-modal .agent-item:hover{background:rgba(109,188,192,.1)}
 .share-modal .agent-item input[type=checkbox]{margin-right:10px;accent-color:var(--primary);cursor:pointer}
-.share-modal .agent-item .agent-name{flex:1;font-size:14px;display:flex;align-items:center;gap:8px}
+.share-modal .agent-item .agent-name{flex:1;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .share-modal .agent-item .agent-role{font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(109,188,192,.15);color:var(--primary)}
 .share-modal .agent-item.is-member{opacity:.6;cursor:default;background:rgba(255,255,255,.02)}
 .share-modal .agent-item.is-member .agent-name{color:var(--text2)}
+.share-modal .member-status{font-size:11px;padding:2px 8px;border-radius:10px;margin-left:6px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.share-modal .member-status.joined{background:rgba(80,200,120,.15);color:#50c878}
+.share-modal .member-status.invited{background:rgba(255,200,60,.15);color:#f0c040}
 .share-modal .link-section{margin-bottom:14px}
 .share-modal .link-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .share-modal .link-row input{flex:1;background:var(--bg1);color:var(--text1);border:1px solid var(--border);padding:8px 10px;border-radius:6px;font-size:12px;font-family:monospace;outline:none}
@@ -309,7 +314,7 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
         </div>
         <div class="perf-divider"></div>
         <div class="perf-auto-row">
-          <label>🔇 切走自动省电</label>
+          <label for="perf-auto-toggle">🔇 切走自动省电</label>
           <label class="perf-toggle"><input type="checkbox" id="perf-auto-toggle" onchange="togglePerfAuto()"><span class="slider"></span></label>
         </div>
         <div class="perf-status" id="perf-status"><span class="status-dot active"></span>SSE 已连接 · 默认模式</div>
@@ -335,12 +340,12 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
         <span id="reply-text"></span>
         <span class="close" onclick="cancelReply()">✕</span>
       </div>
-      <select id="sender">
+      <label for="sender" class="sr-only">选择发送者</label><select id="sender">
         <option value="金金">金金</option>
         <option value="Pumpkin">Pumpkin</option>
         <option value="胖胖金">胖胖金</option>
       </select>
-      <textarea id="input" rows="1" placeholder="输入消息..."></textarea>
+      <label for="input" class="sr-only">输入消息</label><textarea id="input" rows="1" placeholder="输入消息..."></textarea>
       <button onclick="send()">发送</button>
       <button onclick="wakeAgents()" title="催一下Agent — 发送紧急通知" style="background:var(--bg3);color:var(--text2);border:1px solid var(--border);padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;position:relative">📣</button>
     </div>
@@ -353,7 +358,7 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
       <button class="close-btn" onclick="closeArchiveModal()">✕</button>
     </div>
     <div class="path-section">
-      <label>📂 默认路径：</label>
+      <label for="archive-path">📂 默认路径：</label>
       <input id="archive-path" placeholder="设置归档文件存储路径..." value="">
       <button onclick="openArchiveFolder()">打开文件夹</button>
       <button onclick="saveArchivePath()">保存</button>
@@ -409,8 +414,8 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 <div class="modal-overlay" id="modal-new-thread">
   <div class="modal">
     <h3>新建话题</h3>
-    <input id="new-thread-id" placeholder="话题ID（英文）">
-    <input id="new-thread-name" placeholder="话题名称">
+    <label for="new-thread-id" class="sr-only">话题ID</label><input id="new-thread-id" placeholder="话题ID（英文）">
+    <label for="new-thread-name" class="sr-only">话题名称</label><input id="new-thread-name" placeholder="话题名称">
     <div class="btns">
       <button class="cancel" onclick="closeModal('modal-new-thread')">取消</button>
       <button class="ok" onclick="createThread()">创建</button>
@@ -421,12 +426,12 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 <div class="modal-overlay" id="modal-share">
   <div class="modal share-modal">
     <h3>🔗 分享话题</h3>
-    <div class="link-label">Web链接</div>
+    <label for="share-web-link" class="link-label">Web链接</label>
     <div class="link-row">
       <input id="share-web-link" readonly>
       <button onclick="copyShareLink('web',this)">复制</button>
     </div>
-    <div class="link-label">Agent协议链接</div>
+    <label for="share-agent-link" class="link-label">Agent协议链接</label>
     <div class="link-row">
       <input id="share-agent-link" readonly>
       <button onclick="copyShareLink('agent',this)">复制</button>
@@ -966,17 +971,24 @@ async function loadShareAgents() {
     ]);
     const participants = await partRes.json();
     const memberData = await memberRes.json();
-    const existingMembers = new Set((memberData.members || []).map(m => m.agent_id));
+    const memberMap = {};
+    (memberData.members || []).forEach(m => { memberMap[m.agent_id] = m.status; });
+
+    const roleLabels = {owner:'👑 创建者', commander:'🎯 指挥官', worker:'⚙️ 执行者'};
+    const statusLabels = {joined:'✅ 已加入', invited:'📨 已邀请'};
 
     listEl.innerHTML = '';
     participants.forEach(p => {
-      const isMember = existingMembers.has(p.id);
+      const memberStatus = memberMap[p.id]; // undefined | 'invited' | 'joined'
+      const isMember = !!memberStatus;
       const div = document.createElement('div');
       div.className = 'agent-item' + (isMember ? ' is-member' : '');
+      const roleLabel = roleLabels[p.role] || p.role;
+      const statusHtml = isMember ? `<span class="member-status ${memberStatus}">${statusLabels[memberStatus] || memberStatus}</span>` : '';
       div.innerHTML = `
         <input type="checkbox" value="${p.id}" ${isMember ? 'disabled' : ''}>
-        <span class="agent-name">${p.name}${isMember ? ' <span style="color:var(--text2);font-size:11px">(已在话题中)</span>' : ''}</span>
-        <span class="agent-role">${p.role}</span>
+        <span class="agent-name">${p.name}${statusHtml}</span>
+        <span class="agent-role">${roleLabel}</span>
       `;
       if (!isMember) {
         div.onclick = (e) => {
