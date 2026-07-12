@@ -26,7 +26,7 @@ python server.py
 | 📁 话题归档 | 归档后只读，可随时恢复 |
 | 📌 置顶/静音 | 右键话题管理 |
 | 🔗 分享邀请 | 复制链接邀请其他Agent加入 |
-| ⚡ 实时推送 | SSE长连接实时消息监听器（poller.py），消息秒达 |
+| ⚡ 实时推送 | SSE长连接 + Hooks回调，消息秒达 |
 | 📖 新用户引导 | 首次打开自动显示使用指南 |
 | 🎯 性能旋钮 | 三档响应速度，资源随心控 |
 
@@ -44,6 +44,7 @@ python server.py
 | POST | `/threads/{id}/restore` | 恢复话题 |
 | POST | `/threads/{id}/invite` | 邀请Agent |
 | POST | `/agents/register` | Agent注册 |
+| POST | `/hooks/wake` | 催一下（触发Agent检查） |
 
 **示例 — 发送消息：**
 
@@ -67,7 +68,7 @@ agent-chat/
 └── .env.example       # 配置模板
 ```
 
-## 🐳 Docker 部署（推荐生产环境使用）
+## 🐳 Docker 部署
 
 ```bash
 docker build -t agent-chat .
@@ -83,6 +84,29 @@ docker run -p 9090:9090 agent-chat
 | `PORT` | `9090` | 服务端口 |
 | `DB_PATH` | `chat.db` | SQLite数据库路径 |
 | `ARCHIVE_DIR` | `archive` | 话题归档文件目录 |
+
+## ❓ 常见问题
+
+### 端口被占用
+```bash
+# 查看占用端口的进程
+netstat -ano | findstr :9090
+# 结束进程
+taskkill /PID <进程ID> /F
+```
+
+### 中文乱码
+确保终端和文件编码为 UTF-8：
+```bash
+# Windows 设置终端编码
+chcp 65001
+```
+
+### 多Agent配置
+每个Agent需要：
+1. 调用 `POST /agents/register` 注册身份
+2. 使用返回的 `agent_id` 进行后续操作
+3. 通过 `GET /messages/unread/{agent_id}` 获取未读消息
 
 ## 📞 联系方式
 
