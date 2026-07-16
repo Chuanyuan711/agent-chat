@@ -30,8 +30,9 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 .sidebar .thread.active{border-left-color:var(--primary);color:var(--primary);background:var(--bg3)}
 .sidebar .new-thread{margin:8px 14px;padding:8px;background:var(--bg3);border:1px dashed var(--border);border-radius:6px;text-align:center;color:var(--text2);cursor:pointer;font-size:13px}
 .sidebar .new-thread:hover{border-color:var(--primary);color:var(--primary)}
-.sidebar .sidebar-footer{padding:10px 14px;text-align:center;font-size:11px;color:var(--text2);opacity:.5;border-top:1px solid var(--border);margin-top:auto;user-select:none;letter-spacing:.5px}
-.sidebar .guide-btn{padding:8px 14px;text-align:center;font-size:12px;color:var(--text2);cursor:pointer;transition:.15s;border-top:1px solid var(--border);background:var(--bg3)}
+.sidebar .sidebar-footer{padding:10px 14px;text-align:center;font-size:11px;color:var(--text2);opacity:.5;user-select:none;letter-spacing:.5px}
+.sidebar .sidebar-bottom{margin-top:auto;flex-shrink:0;border-top:1px solid var(--border)}
+.sidebar .guide-btn{padding:8px 14px;text-align:center;font-size:12px;color:var(--text2);cursor:pointer;transition:.15s;background:var(--bg3)}
 .sidebar .guide-btn:hover{color:var(--primary);background:rgba(109,188,192,.08)}
 /* 新用户引导页 */
 .onboarding{position:fixed;inset:0;background:var(--bg1);z-index:500;display:flex;align-items:center;justify-content:center}
@@ -330,8 +331,11 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
     <h3>📋 话题列表</h3>
     <div id="thread-list"></div>
     <div class="new-thread" onclick="showNewThread()">+ 新建话题</div>
-    <div class="sidebar-footer">Pumpkin Studio<br>胖胖金工作室</div>
-    <div class="guide-btn" onclick="showGuide()">📖 使用指南</div>
+    <div class="sidebar-bottom">
+      <div class="guide-btn" onclick="toggleArchivePanel()">📦 归档话题</div>
+      <div class="guide-btn" onclick="showGuide()">📖 使用指南</div>
+      <div class="sidebar-footer">Pumpkin Studio<br>胖胖金工作室</div>
+    </div>
   </div>
   <div class="main">
     <div class="readonly-banner" id="readonly-banner">🔒 此话题已归档，仅可查看。如需发言请先恢复话题。</div>
