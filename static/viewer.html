@@ -156,7 +156,7 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 /* 归档悬浮弹窗 */
 .archive-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
 .archive-modal-overlay.show{display:flex}
-.archive-modal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:0;width:480px;max-height:80vh;display:flex;flex-direction:column}
+.archive-modal{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:0;width:600px;max-height:80vh;display:flex;flex-direction:column}
 .archive-modal .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
 .archive-modal .modal-header h3{color:var(--primary);font-size:15px}
 .archive-modal .modal-header .close-btn{cursor:pointer;font-size:18px;opacity:.6;color:var(--text2);background:none;border:none;padding:4px 8px}
@@ -1305,11 +1305,16 @@ function renderArchiveList(threads) {
     const div = document.createElement('div');
     div.className = 'archive-item';
     div.innerHTML = `
-      <div class="archive-name">📦 ${t.name || t.id}</div>
-      <div class="archive-meta">${t.id} · 归档于 ${formatArchiveTime(t.created_at)}</div>
-      <div class="restore-btn" onclick="event.stopPropagation();restoreThread('${t.id}')">🔄 恢复话题</div>
-    `;
-    div.onclick = () => viewArchivedThread(t.id);
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="archive-name">📦 ${t.name || t.id}</div>
+          <div class="archive-meta">${t.id} · 归档于 ${formatArchiveTime(t.created_at)}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button onclick="event.stopPropagation();restoreThread('${t.id}')" style="padding:4px 10px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">🔄 恢复</button>
+          <button onclick="event.stopPropagation();viewArchivedThread('${t.id}')" style="padding:4px 10px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px">👁️ 查看</button>
+        </div>
+      </div>`;
     listEl.appendChild(div);
   });
 }
