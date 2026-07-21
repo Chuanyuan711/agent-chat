@@ -53,9 +53,9 @@ header .actions .share-btn:hover{filter:brightness(1.15)}
 .onboarding .ob-skip:hover{opacity:1;color:var(--primary)}
 .onboarding .ob-contact{margin-top:20px;font-size:11px;color:var(--text2);opacity:.5}
 .modal.guide-modal{width:700px;height:auto;display:flex;flex-direction:column;padding:20px}
-.guide-modal h3{color:var(--primary);margin-bottom:12px;font-size:15px}
+.guide-modal h3{color:var(--primary);margin-bottom:12px;font-size:15px;text-align:center}
 .guide-body{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.guide-body .guide-section{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.guide-body .guide-section{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center}
 .guide-body .guide-title{font-size:12px;color:var(--primary);font-weight:600;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
 .guide-body .guide-row{font-size:11px;color:var(--text2);padding:2px 0;line-height:1.5}
 .guide-copy-btn{display:block;width:100%;padding:6px 10px;margin:4px 0;font-size:11px;background:var(--bg1);color:var(--text2);border:1px solid var(--border);border-radius:6px;cursor:pointer;text-align:left;transition:.15s}
@@ -465,6 +465,8 @@ let currentThread = 'general';
   } else if (savedThread) {
     currentThread = savedThread;
   }
+  // 注意：currentThread可能是归档的thread，loadThreads()会在之后修正
+  // 为避免加载归档消息，先不调用loadMessages，等loadThreads确认后再调
 })();
 let replyTo = null;
 let messagesCache = {};
@@ -528,6 +530,12 @@ function checkArchiveStatus(threadId) {
 }
 
 async function loadMessages() {
+  if (!currentThread) {
+    document.getElementById('messages').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:14px;flex-direction:column;gap:8px"><div style="font-size:32px">📭</div><div>没有活跃话题</div><div style="font-size:12px">点击左侧「+ 新建话题」创建</div></div>';
+    var inputArea = document.querySelector('.input-area');
+    if (inputArea) inputArea.style.display = 'none';
+    return;
+  }
   const res = await fetch(`${API}/messages?thread_id=${currentThread}&limit=200`);
   const data = await res.json();
   messagesCache = {};
@@ -1391,14 +1399,19 @@ loadThreads = async function() {
   const activeThreads = threads.filter(t => t.status === 'active');
   const archivedThreads = threads.filter(t => t.status === 'archived');
   
-  // #T-0711-13: 验证当前话题是否还存在，不存在则回退
-  const allThreadIds = threads.map(t => t.id);
-  if (currentThread && !allThreadIds.includes(currentThread)) {
-    currentThread = activeThreads.length > 0 ? activeThreads[0].id : 'general';
+  // 验证当前话题是否是active的，不是则回退到第一个active thread
+  const activeThreadIds = activeThreads.map(t => t.id);
+  if (!currentThread || !activeThreadIds.includes(currentThread)) {
+    currentThread = activeThreads.length > 0 ? activeThreads[0].id : '';
     localStorage.setItem('agentchat_thread', currentThread);
-    history.replaceState(null, '', '#' + currentThread);
-    loadMessages();
-    reconnectSSE();
+    history.replaceState(null, '', currentThread ? '#' + currentThread : '');
+    if (currentThread) {
+      loadMessages();
+      reconnectSSE();
+    } else {
+      document.getElementById('messages').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:14px;flex-direction:column;gap:8px"><div style="font-size:32px">📭</div><div>没有活跃话题</div><div style="font-size:12px">点击左侧「+ 新建话题」创建</div></div>';
+      document.querySelector('.input-area').style.display = 'none';
+    }
   }
   
   // 排序：置顶 > 有未读 > 最近活跃
@@ -1522,8 +1535,7 @@ POST http://localhost:9090/agents/register
   autoGrow();
 })();
 checkOnboarding();
-loadThreads();
-loadMessages();
+loadThreads().then(() => { loadMessages(); });
 loadParticipants();
 sseConnection = connectSSE();
 // #T-0711-16: 性能旋钮初始化
