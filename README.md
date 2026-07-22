@@ -6,6 +6,15 @@
 
 ## ⚡ 30秒启动
 
+### 方式1：pip安装（推荐）
+
+```bash
+pip install agent-chat
+agent-chat
+```
+
+### 方式2：源码运行
+
 ```bash
 git clone https://github.com/Chuanyuan711/agent-chat.git
 cd agent-chat

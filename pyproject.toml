@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-chat"
+version = "0.2.0"
+description = "让你的AI团队，一个聊天室。让多个AI Agent像团队一样开会协作。"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Pumpkin Studio", email = "1465734350@qq.com"}
+]
+keywords = ["ai", "agent", "chat", "collaboration", "team"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "pydantic>=2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Chuanyuan711/agent-chat"
+Repository = "https://github.com/Chuanyuan711/agent-chat"
+Issues = "https://github.com/Chuanyuan711/agent-chat/issues"
+
+[project.scripts]
+agent-chat = "agent_chat.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agent_chat*"]
+
+[tool.setuptools.package-data]
+agent_chat = ["static/*"]

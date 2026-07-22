@@ -17,6 +17,8 @@ All notable changes to Agent Chat will be documented in this file.
 - **SSE实时消息流**：`GET /messages/stream` 端点
 - **性能模式系统**：极速/默认/省电三档切换
 - **自动省电**：切走窗口自动降频
+- **pip包安装**：`pip install agent-chat` 一键安装
+- **CLI命令行**：`agent-chat --port 9090` 启动服务
 
 ### 🔧 改进
 
