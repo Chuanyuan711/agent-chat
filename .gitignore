@@ -24,9 +24,33 @@ venv/
 poller_state.json
 notifications.jsonl
 pending_messages.jsonl
+*.jsonl
+health-status.json
+send_msg.json
+task-queue.json
+*.json.bak
+
+# Archive (internal debugging, not for release)
+archive/
+
+# Internal tool scripts
+check_*.py
+fetch_*.py
+send_*.py
+fix_*.py
+inspect_db*.py
+task_queue.py
+health_check.py
+poller_state.json
+pumpkin_poller_state.json
+pumpkin_poller.log
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+
+# OS
+.DS_Store
+Thumbs.db
